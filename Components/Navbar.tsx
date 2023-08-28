@@ -19,13 +19,15 @@ const Navbar = () => {
   const [open, setOpen] = React.useState<boolean>(false);
 
   return (
-    <nav className="bg-slate-400 p-4 shadow-xl">
+    <nav className="bg-slate-300 p-4 shadow-xl">
       <div className="container mx-auto flex md:flex-row justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
-          <Link href="/">
-            <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
-          </Link>
+          <Button variant="ghost" size="logo">
+            <Link href="/">
+              <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile Menu */}
@@ -68,7 +70,7 @@ const Navbar = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="secondary">
-                  <FaCartShopping size={23} />
+                <FaCartShopping size={23} />
               </Button>
             </PopoverTrigger>
             <PopoverContent className='w-80'>
