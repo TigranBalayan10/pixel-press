@@ -56,7 +56,7 @@ export function NavigationMenuItems() {
 
     return (
         <NavigationMenu>
-            <NavigationMenuList className="flex flex-col justify-start md:flex-row "> 
+            <NavigationMenuList className="flex flex-col justify-start md:flex-row items-start md:text-base"> 
                 <NavigationMenuItem>
                     <Link href="/products" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -110,7 +110,7 @@ const ListItem = React.forwardRef<
                 <a
                     ref={ref}
                     className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ",
                         className
                     )}
                     {...props}

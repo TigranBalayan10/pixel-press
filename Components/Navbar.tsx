@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './ui/collapsible';
+import { navigationMenuTriggerStyle } from './ui/navigation-menu';
 import { FaBars } from 'react-icons/fa';
 
 
@@ -16,7 +17,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-slate-400 p-4 shadow-xl">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+      <div className="container mx-auto flex md:flex-row justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/">
@@ -26,11 +27,14 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         <Collapsible open={open} onOpenChange={setOpen} className="md:hidden w-full">
-          <CollapsibleTrigger className="flex justify-end" asChild>
-            <Button variant="secondary" onClick={() => setOpen(!open)}>
-              <FaBars />
-            </Button>
+          <CollapsibleTrigger className="" asChild>
+            
+            <div onClick={() => setOpen(!open)} className={navigationMenuTriggerStyle()}>
+              <FaBars size={23}/>
+            </div>
           </CollapsibleTrigger>
+
+          
 
           <CollapsibleContent className="flex flex-col space-y-2 mt-2 md:hidden">
               <NavigationMenuItems />
