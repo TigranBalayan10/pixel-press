@@ -20,9 +20,9 @@ const Navbar = () => {
 
   return (
     <nav className="bg-slate-300 p-4 shadow-xl">
-      <div className="container mx-auto flex md:flex-row justify-between items-center">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center">
+        <div className="items-center hidden md:flex">
           <Button variant="ghost" size="logo">
             <Link href="/">
               <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
@@ -31,17 +31,32 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className="flex md:hidden">
+        <div className="flex md:hidden w-full">
           <Collapsible open={open} onOpenChange={setOpen} className="md:hidden w-full">
-            <CollapsibleTrigger className="" asChild>
+            <CollapsibleTrigger asChild>
 
-              <div onClick={() => setOpen(!open)} className={navigationMenuTriggerStyle()}>
-                <FaBars size={23} />
+
+              <div className='flex justify-between items-center'>
+                <div onClick={() => setOpen(!open)} className={navigationMenuTriggerStyle() + ' grow-0'}>
+                  <FaBars size={23} />
+                </div>
+                <Button variant="ghost" size="logo">
+                  <Link href="/">
+                    <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
+                  </Link>
+                </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="secondary" className="grow-0">
+                      <FaCartShopping size={23} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-80 right-12'>
+                    <Cart />
+                  </PopoverContent>
+                </Popover>
               </div>
             </CollapsibleTrigger>
-
-
-
             <CollapsibleContent className="flex flex-col space-y-2 mt-2 md:hidden">
               <NavigationMenuItems />
               <Button>
@@ -50,6 +65,7 @@ const Navbar = () => {
               <Button variant="secondary">
                 <Link href="/login">Login</Link>
               </Button>
+             
             </CollapsibleContent>
           </Collapsible>
         </div>
