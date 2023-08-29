@@ -38,20 +38,20 @@ const Navbar = () => {
 
               <div className='flex justify-between items-center'>
                 <div onClick={() => setOpen(!open)} className={navigationMenuTriggerStyle() + ' grow-0'}>
-                  <FaBars size={23} />
+                  <FaBars size={20} />
                 </div>
                 <Button variant="ghost" size="logo">
                   <Link href="/">
-                    <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
+                    <Image src="/x-logo.svg" width={40} height={40} alt='Pixel press logo' />
                   </Link>
                 </Button>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="secondary" className="grow-0">
-                      <FaCartShopping size={23} />
+                    <Button variant="ghost" className="grow-0">
+                      <FaCartShopping size={20} />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className='w-80 right-12'>
+                  <PopoverContent className='w-80'>
                     <Cart />
                   </PopoverContent>
                 </Popover>
