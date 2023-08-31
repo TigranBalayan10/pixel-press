@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import Link from "next/link"
-
-
 import { cn } from "@/lib/utils"
+import ProductList from "@/lib/Data/ProductList.json"
+import { productList } from "@/lib/types"
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -16,39 +16,10 @@ import {
     NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
 
-const products: { title: string; href: string; description: string }[] = [
-    {
-        title: "Business Card",
-        href: "/businesscard",
-        description: "Turn this business essential into an unforgettable first impression."
-    },
-    {
-        title: "Postcard",
-        href: "/postcard",
-        description: "Transform your message into a visual delight, delivered straight to the mailbox."
-    },
-    {
-        title: "Envelope",
-        href: "/envelope",
-        description: "Make every correspondence count with our custom printed envelopes."
-    },
-    {
-        title: "Brochure",
-        href: "/brochure",
-        description: "Engage and inform your audience with a professionally designed, easy-to-read brochure."
-    },
-    {
-        title: "Poster",
-        href: "/poster",
-        description: "Captivate any crowd with stunning visuals that speak louder than words."
-    },
-    {
-        title: "Flyer",
-        href: "/flyer",
-        description: "Elevate your event or promotion with eye-catching flyers that grab attention."
-    },
-]
 
+const typedProductList: productList[] = ProductList
+
+const firstSixProducts = typedProductList.slice(0, 6)
 
 
 
@@ -56,7 +27,7 @@ export function NavigationMenuItems() {
 
     return (
         <NavigationMenu>
-            <NavigationMenuList className="flex flex-col justify-start md:flex-row items-start md:text-base"> 
+            <NavigationMenuList className="flex flex-col justify-start md:flex-row items-start md:text-base">
                 <NavigationMenuItem>
                     <Link href="/products" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -68,13 +39,13 @@ export function NavigationMenuItems() {
                     <NavigationMenuTrigger>Popular</NavigationMenuTrigger>
                     <NavigationMenuContent>
                         <ul className="grid w-[300px] gap-3 p-4 md:w-[300px] md:grid-cols-2 lg:w-[600px]">
-                            {products.map((component) => (
+                            {firstSixProducts.map((product: { title: string, href: string, description: string }) => (
                                 <ListItem
-                                    key={component.title}
-                                    title={component.title}
-                                    href={component.href}
+                                    key={product.title}
+                                    title={product.title}
+                                    href={product.href}
                                 >
-                                    {component.description}
+                                    {product.description}
                                 </ListItem>
                             ))}
                         </ul>
