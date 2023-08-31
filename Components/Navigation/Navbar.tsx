@@ -2,13 +2,13 @@
 
 import React from 'react'
 import { NavigationMenuItems } from './NavigationMenuItems';
-import { Cart } from './Cart';
-import { Button } from './ui/button';
+import { Cart } from '../Cart';
+import { Button } from '../ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './ui/collapsible';
-import { navigationMenuTriggerStyle } from './ui/navigation-menu';
-import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../ui/collapsible';
+import { navigationMenuTriggerStyle } from '../ui/navigation-menu';
+import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover';
 import { FaBars } from 'react-icons/fa';
 import { FaCartShopping } from 'react-icons/fa6';
 
