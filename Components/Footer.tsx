@@ -5,7 +5,7 @@ import { FaSquareTwitter, FaSquareFacebook, FaSquareInstagram } from 'react-icon
 
 const Footer = () => {
     return (
-        <footer className="footer footer-center p-10 bg-secondary text-base-content rounded">
+        <footer className="footer footer-center p-10 bg-secondary text-base-content rounded mt-5">
             <div className="grid grid-flow-col gap-4">
                 <Link href="/about">
                     <Button size="sm" variant="link">AboutUs</Button>

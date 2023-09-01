@@ -7,7 +7,7 @@ import Image from 'next/image'
 
 const Hero = () => {
     return (
-        <div className="hero bg-secondary w-screen mt-5 md:mt-10 p-5">
+        <div className="hero w-screen h-3/4 mt-5 md:mt-10 p-5">
             <div className="hero-content flex-col lg:flex-row-reverse">
                 <Image src="/working_color_choice.jpg" alt="Color choice stock photo" width={700} height={700} className="rounded-lg shadow-2xl" />
                 <div>
