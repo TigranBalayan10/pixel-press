@@ -25,7 +25,7 @@ const Navbar = () => {
         <div className="items-center hidden md:flex">
           <Button variant="ghost" size="logo">
             <Link href="/">
-              <Image src="/x-logo.svg" width={50} height={50} alt='Pixel press logo' />
+              <Image src="/spectra-logo.svg" width={50} height={50} alt='Pixel press logo' />
             </Link>
           </Button>
         </div>
@@ -42,7 +42,7 @@ const Navbar = () => {
                 </div>
                 <Button variant="ghost" size="logo">
                   <Link href="/">
-                    <Image src="/x-logo.svg" width={40} height={40} alt='Pixel press logo' />
+                    <Image src="/spectra-logo.svg" width={40} height={40} alt='Pixel press logo' />
                   </Link>
                 </Button>
                 <Popover>
