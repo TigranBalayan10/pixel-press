@@ -3,14 +3,53 @@
     "title": "Business Card",
     "href": "/order/business-card",
     "description": "Turn this business essential into an unforgettable first impression.",
-    "image": "/business-card_mockup.jpg"
+    "image": "/business-card_mockup.jpg",
+    "sizes": [
+      "2\"x3.5\" U.S. Standard",
+      "1.75\"x3\"",
+      "1.75\" x 3.5\"",
+      "2\"x3\"",
+      "2.17\" x 3.35\" European Standard"
+    ],
+    "paper": [
+      "14 pt. Gloss",
+      "14 pt. Uncoated",
+      "100 lb. Recycled Matte Cover",
+      "13 pt. Premium Linen",
+      "16 pt. Premium Matte",
+      "18 pt. Premium Kraft",
+      "18 pt. Ultra Premium Pearl",
+      "18 pt. Ultra Premium Smooth White",
+      "24 pt. Trifecta Green",
+      "35 pt. Trifecta Pearl with Kanvas Texture",
+      "38 pt. Trifecta Black",
+      "38 pt. Trifecta Blue",
+      "38 pt. Trifecta Red"
+    ],
+    "color": [
+      "Full Color Front & Back",
+      "Full Color Front, Blank Back"
+    ],
+    "Orientation": [
+      "Horizontal",
+      "Vertical"
+    ],
+    "quantity": [
+      "50",
+      "100",
+      "250",
+      "500",
+      "1000",
+      "2500",
+      "5000",
+      "10000"
+    ]
   },
   {
     "title": "Postcard",
     "href": "/order/postcard",
     "description": "Transform your message into a visual delight, delivered straight to the mailbox.",
     "image": "/postcard_mockup.jpg"
-    
   },
   {
     "title": "Envelope",

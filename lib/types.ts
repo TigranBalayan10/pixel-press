@@ -3,4 +3,5 @@ export interface productList {
     href: string;
     description: string;
     image: string;
+    sizes?: string[];
   }
