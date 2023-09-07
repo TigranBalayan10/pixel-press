@@ -4,4 +4,9 @@ export interface productList {
     description: string;
     image: string;
     sizes?: string[];
+    paper?: string[];
+    colors?: string[];
+    orientation?: string[];
+    quality?: number[];
+    rounded?: string[];
   }
