@@ -17,6 +17,9 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import "@uploadthing/react/styles.css";
+import { UploadButton } from "@uploadthing/react";
+import { OurFileRouter } from '@/app/api/uploadthing/core';
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
@@ -26,7 +29,7 @@ import { productList } from "@/lib/types"
 import Image from 'next/image'
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { PCSchema } from '@/lib/PCSchema'
 import * as z from "zod";
 
@@ -48,6 +51,7 @@ const getPostcardOptions = (optionType: OptionType) => {
 const Postcard = () => {
 
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
+    const [showAlert, setShowAlert] = useState<boolean>(false);
     const form = useForm<z.infer<typeof PCSchema>>({
         resolver: zodResolver(PCSchema),
     })
@@ -106,8 +110,21 @@ const Postcard = () => {
                                 })}
                                 {/* Additional fields like file upload can go here */}
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <FormLabel htmlFor="design_front">Upload Front</FormLabel>
-                                    <Input id="front" type="file" />
+                                    <div className="flex justify-between gap-x-4">
+                                        <FormLabel htmlFor="design_front">Upload Front</FormLabel>
+                                        <UploadButton<OurFileRouter>
+                                            endpoint="imageUploader"
+                                            onClientUploadComplete={(res) => {
+                                                // Do something with the response
+                                                console.log("Files: ", res);
+                                                alert("Files uploaded successfully!");
+                                            }}
+                                            onUploadError={(error: Error) => {
+                                                // Do something with the error.
+                                                alert(`ERROR! ${error.message}`);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
                                     <div className="flex justify-between gap-x-4">
@@ -116,9 +133,9 @@ const Postcard = () => {
                                     </div>
                                     {
                                         isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <Input id="back" type="file" />
-                                        
+
                                     }
-                                    
+
                                 </div>
                             </div>
                         </div>
