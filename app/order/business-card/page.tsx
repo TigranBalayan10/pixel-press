@@ -26,7 +26,7 @@ import { productList } from "@/lib/types"
 import Image from 'next/image'
 
 
-type OptionType = 'sizes' | 'paper' | 'color' | 'orientation' | 'quantity' | 'rounded';
+type OptionType = 'sizes' | 'paper' | 'orientation' | 'quantity' | 'rounded';
 
 const typedProductList: productList[] = ProductList;
 type ValueType<T> = T extends 'quantity' ? number : string;
@@ -73,6 +73,7 @@ const OrderBusinessCard = () => {
 
     return (
         <form className='flex justify-center' onSubmit={(e) => e.preventDefault()}>
+
             <div className="card w-96 m-4 md:w-1/2 bg-secondary text-primary-content mt-5">
 
                 <div className="card-body gap-4">
@@ -88,7 +89,6 @@ const OrderBusinessCard = () => {
                             {[
                                 { type: 'sizes', placeholder: 'Select a size' },
                                 { type: 'paper', placeholder: 'Select Paper' },
-                                { type: 'color', placeholder: 'Select Color' },
                                 { type: 'orientation', placeholder: 'Orientation' },
                                 { type: 'quantity', placeholder: 'Quantity' },
                                 { type: 'rounded', placeholder: 'Rounded' },
@@ -96,10 +96,7 @@ const OrderBusinessCard = () => {
                                 <RenderSelect options={getBusinessCardOptions(type as OptionType)} placeholder={placeholder} key={type} />
                             ))}
                             <div className="grid w-full max-w-sm items-center gap-1.5">
-
-                                <div className="flex justify-between gap-x-4">
-                                    <Label htmlFor="design_back">Upload Front</Label>
-                                </div>
+                                <Label htmlFor="design_back">Upload Front</Label>
                                 <Input id="front" type="file" />
                             </div>
                             <div className="grid w-full max-w-sm items-center gap-1.5">
