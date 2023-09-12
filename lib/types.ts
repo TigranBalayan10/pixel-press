@@ -7,6 +7,6 @@ export interface productList {
     paper?: string[];
     colors?: string[];
     orientation?: string[];
-    quality?: number[];
+    quantity?: string[];
     rounded?: string[];
   }
