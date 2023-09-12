@@ -19,7 +19,7 @@ const Navbar = () => {
   const [open, setOpen] = React.useState<boolean>(false);
 
   return (
-    <nav className="bg-slate-300 p-4 shadow-xl sticky z-10">
+    <nav className="bg-sky-200 p-4 shadow-xl sticky z-10">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         {/* Logo */}
         <div className="items-center hidden md:flex">

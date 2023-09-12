@@ -17,12 +17,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
@@ -69,7 +63,7 @@ const Postcard = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex justify-center">
-                <div className="card w-96 m-4 md:w-1/2 bg-secondary text-primary-content mt-5">
+                <div className="card w-96 m-4 md:w-1/2 bg-secondary text-primary-content mt-5 shadow-lg">
                     <div className="card-body gap-4">
                         <h2 className="card-title">Postcard</h2>
                         <div className="flex justify-between gap-x-4">
@@ -122,7 +116,9 @@ const Postcard = () => {
                                     </div>
                                     {
                                         isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <Input id="back" type="file" />
+                                        
                                     }
+                                    
                                 </div>
                             </div>
                         </div>
