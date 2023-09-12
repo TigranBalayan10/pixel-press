@@ -17,10 +17,16 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import ProductList from "@/lib/Data/ProductList.json"
 import { productList } from "@/lib/types"
 import Image from 'next/image'
@@ -46,6 +52,8 @@ const getPostcardOptions = (optionType: OptionType) => {
 
 
 const Postcard = () => {
+
+    const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
     const form = useForm<z.infer<typeof PCSchema>>({
         resolver: zodResolver(PCSchema),
     })
@@ -103,6 +111,19 @@ const Postcard = () => {
                                     );
                                 })}
                                 {/* Additional fields like file upload can go here */}
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <FormLabel htmlFor="design_front">Upload Front</FormLabel>
+                                    <Input id="front" type="file" />
+                                </div>
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <div className="flex justify-between gap-x-4">
+                                        <FormLabel htmlFor="design_back">Upload Back</FormLabel>
+                                        <Switch checked={isSwitchChecked} onCheckedChange={checked => setIsSwitchChecked(checked)} />
+                                    </div>
+                                    {
+                                        isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <Input id="back" type="file" />
+                                    }
+                                </div>
                             </div>
                         </div>
                         <div className="card-actions justify-end">
