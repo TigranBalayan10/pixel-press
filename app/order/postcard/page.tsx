@@ -17,7 +17,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import "@uploadthing/react/styles.css";
+// import "@uploadthing/react/styles.css";
 import { UploadButton } from "@uploadthing/react";
 import { OurFileRouter } from '@/app/api/uploadthing/core';
 import { Separator } from '@/components/ui/separator'
@@ -27,7 +27,6 @@ import { Input } from '@/components/ui/input'
 import ProductList from "@/lib/Data/ProductList.json"
 import { productList } from "@/lib/types"
 import Image from 'next/image'
-import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { set, useForm } from "react-hook-form"
 import { PCSchema } from '@/lib/PCSchema'
@@ -51,13 +50,40 @@ const getPostcardOptions = (optionType: OptionType) => {
 const Postcard = () => {
 
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
-    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [images, setImages] = useState<{
+        name: string;
+        key: string;
+        url: string;
+        size: number;
+    }[]>([]);
+
+    const imagePreview = images.map((image) => (
+        <>
+            <div className="flex items-center" key={image.key}>
+                <div className="flex-shrink-0">
+                    <Image
+                        src={image.url}
+                        alt={image.name}
+                        width={50}
+                        height={50}
+                    />
+                </div>
+                <div className="ml-4">
+                    <div className="text-sm font-medium text-gray-900">{image.name}</div>
+                    <div className="text-sm text-gray-500">{(image.size/1024).toPrecision(4)} KB</div>
+                </div>
+            </div>
+        </>
+    ));
+
+
     const form = useForm<z.infer<typeof PCSchema>>({
         resolver: zodResolver(PCSchema),
     })
 
+
     function onSubmit(data: z.infer<typeof PCSchema>) {
-        console.log(data)
+        console.log({data, images})
     }
 
     const optionTypes: OptionType[] = ['sizes', 'paper', 'orientation', 'quantity'];
@@ -110,9 +136,48 @@ const Postcard = () => {
                                 })}
                                 {/* Additional fields like file upload can go here */}
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
+                                    <FormLabel htmlFor="design_front">Upload Front</FormLabel>
+                                    <UploadButton<OurFileRouter>
+                                        appearance={{
+                                            button:
+                                                "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
+                                            container: "w-max flex-row justify-between rounded-md border-cyan-300 bg-slate-800 w-full",
+                                            allowedContent:
+                                                "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
+                                        }}
+                                        endpoint="imageUploader"
+                                        onClientUploadComplete={(res) => {
+                                            if (res) {
+                                                setImages(res)
+                                                // Do something with the response
+                                                console.log("Files: ", res);
+                                               
+                                            } else {
+                                                setImages([])
+                                            }
+                                            // alert("Files uploaded successfully!");
+                                        }}
+                                        onUploadError={(error: Error) => {
+                                            // Do something with the error.
+                                            alert(`ERROR! ${error.message}`);
+                                        }}
+                                    />
+                                </div>
+                                        {images && images.length > 0 && imagePreview}
+                                <div className="grid w-full max-w-sm items-center gap-1.5">
                                     <div className="flex justify-between gap-x-4">
-                                        <FormLabel htmlFor="design_front">Upload Front</FormLabel>
-                                        <UploadButton<OurFileRouter>
+                                        <FormLabel htmlFor="design_back">Upload Back</FormLabel>
+                                        <Switch checked={isSwitchChecked} onCheckedChange={checked => setIsSwitchChecked(checked)} />
+                                    </div>
+                                    {
+                                        isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <UploadButton<OurFileRouter>
+                                            appearance={{
+                                                button:
+                                                    "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
+                                                container: "w-max flex-row justify-between rounded-md border-cyan-300 bg-slate-800 w-full",
+                                                allowedContent:
+                                                    "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
+                                            }}
                                             endpoint="imageUploader"
                                             onClientUploadComplete={(res) => {
                                                 // Do something with the response
@@ -124,18 +189,8 @@ const Postcard = () => {
                                                 alert(`ERROR! ${error.message}`);
                                             }}
                                         />
-                                    </div>
-                                </div>
-                                <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <div className="flex justify-between gap-x-4">
-                                        <FormLabel htmlFor="design_back">Upload Back</FormLabel>
-                                        <Switch checked={isSwitchChecked} onCheckedChange={checked => setIsSwitchChecked(checked)} />
-                                    </div>
-                                    {
-                                        isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <Input id="back" type="file" />
 
                                     }
-
                                 </div>
                             </div>
                         </div>
