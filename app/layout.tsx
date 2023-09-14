@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navigation/Navbar'
 import Footer from '@/components/Footer'
+import { Toaster } from "@/components/ui/toaster"
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -22,6 +23,7 @@ export default function RootLayout({
         <Navbar />
           {children}
         {/* <Footer /> */}
+        <Toaster />
       </body>
     </html>
   )

@@ -26,6 +26,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 // import "@uploadthing/react/styles.css";
 import { UploadButton } from "@uploadthing/react";
 import { OurFileRouter } from '@/app/api/uploadthing/core';
@@ -42,55 +44,63 @@ import * as z from "zod";
 
 
 type OptionType = 'sizes' | 'paper' | 'orientation' | 'quantity';
-
+interface ImageInfo {
+    key: string;
+    url: string;
+    name: string;
+    size: number;
+}
+interface SelectedSize {
+    width: number;
+    height: number;
+}
 
 
 const Postcard = () => {
 
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
-    const [imageFront, setImagesFront] = useState<{
-        name: string;
-        key: string;
-        url: string;
-        size: number;
-    }[]>([]);
-    const [selectedSize, setSelectedSize] = useState<{ width: number, height: number }>({ width: 0, height: 0 });
+    const [imageFront, setImagesFront] = useState<ImageInfo[]>([]);
+    const [imageBack, setImagesBack] = useState<ImageInfo[]>([]);
+    const [selectedSize, setSelectedSize] = useState<SelectedSize>({ width: 0, height: 0 });
+    const { toast } = useToast();
 
-    const imagePreview = imageFront.map((image) => (
-        <>
-            <div className="flex items-center" key={image.key}>
-                <div className="flex-shrink-0">
-                    <Dialog>
-                        <DialogTrigger asChild className="cursor-pointer">
-                            <Image
-                                src={image.url}
-                                alt={image.name}
-                                width={50}
-                                height={50}
-                            />
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogDescription>
-                                    Please check your design
-                                </DialogDescription>
-                            </DialogHeader>
+    const renderImagePreviews = (images: ImageInfo[], selectedSize: SelectedSize) => {
+        return images.map((image) => (
+            <>
+                <div className="flex items-center" key={image.key}>
+                    <div className="flex-shrink-0">
+                        <Dialog>
+                            <DialogTrigger asChild className="cursor-pointer">
+                                <Image
+                                    src={image.url}
+                                    alt={image.name}
+                                    width={50}
+                                    height={50}
+                                />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogDescription>
+                                        Please check your design
+                                    </DialogDescription>
+                                </DialogHeader>
                                 <Image
                                     src={image.url}
                                     alt={image.name}
                                     height={selectedSize.height}
                                     width={selectedSize.width}
                                 />
-                        </DialogContent>
-                    </Dialog>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                    <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{image.name}</div>
+                        <div className="text-sm text-gray-500">{(image.size / 1024).toPrecision(4)} KB</div>
+                    </div>
                 </div>
-                <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{image.name}</div>
-                    <div className="text-sm text-gray-500">{(image.size / 1024).toPrecision(4)} KB</div>
-                </div>
-            </div>
-        </>
-    ));
+            </>
+        ));
+    };
 
 
     const form = useForm<z.infer<typeof PCSchema>>({
@@ -118,7 +128,7 @@ const Postcard = () => {
                                 <Image src="/postcard_mockup.jpg" className="rounded-lg drop-shadow-md" alt="Postcard stock photo" width={350} height={700} />
                             </figure>
                             <div>
-                                <Separator orientation="vertical" />
+                                <Separator orientation="vertical" className='bg-white' />
                             </div>
                             <div className="flex flex-col justify-start gap-y-3">
                                 {optionTypes.map((optionType) => {
@@ -165,63 +175,90 @@ const Postcard = () => {
                                     );
                                 })}
                                 {/* Additional fields like file upload can go here */}
-                                <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <FormLabel htmlFor="design_front">Upload Front</FormLabel>
-                                    <UploadButton<OurFileRouter>
-                                        appearance={{
-                                            button:
-                                                "ut-ready:bg-primary ut-uploading:loading ut-uploading:loading-ring ut-uploading:loading-md ut-uploading:text-accent rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
-                                            container: "w-max flex-row rounded-md border-cyan-300 bg-slate-800 w-full justify-between",
-                                            allowedContent:
-                                                "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
-                                        }}
-                                        endpoint="imageUploader"
-                                        onClientUploadComplete={(res) => {
-                                            if (res) {
-                                                setImagesFront(res)
-                                                // Do something with the response
-                                                console.log("Files: ", res);
-
-                                            } else {
-                                                setImagesFront([])
-                                            }
-                                            // alert("Files uploaded successfully!");
-                                        }}
-                                        onUploadError={(error: Error) => {
-                                            // Do something with the error.
-                                            alert(`ERROR! ${error.message}`);
-                                        }}
-                                    />
-                                </div>
-                                {imageFront && imageFront.length > 0 && imagePreview}
-                                <div className="grid w-full max-w-sm items-center gap-1.5">
-                                    <div className="flex justify-between gap-x-4">
-                                        <FormLabel htmlFor="design_back">Upload Back</FormLabel>
-                                        <Switch checked={isSwitchChecked} onCheckedChange={checked => setIsSwitchChecked(checked)} />
-                                    </div>
-                                    {
-                                        isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <UploadButton<OurFileRouter>
+                                {selectedSize.width > 0 && selectedSize.height > 0 && <>
+                                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                                        <FormLabel htmlFor="design_front">Upload Front</FormLabel>
+                                        <UploadButton<OurFileRouter>
                                             appearance={{
                                                 button:
-                                                    "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
-                                                container: "w-max flex-row justify-between rounded-md border-cyan-300 bg-slate-800 w-full",
+                                                    "ut-ready:bg-primary ut-uploading:loading ut-uploading:loading-ring ut-uploading:loading-md ut-uploading:text-accent rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
+                                                container: "w-max flex-row rounded-md border-cyan-300 bg-slate-800 w-full justify-between",
                                                 allowedContent:
                                                     "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
                                             }}
                                             endpoint="imageUploader"
                                             onClientUploadComplete={(res) => {
-                                                // Do something with the response
-                                                console.log("Files: ", res);
-                                                alert("Files uploaded successfully!");
+                                                if (res) {
+                                                    setImagesFront(res)
+                                                    // Do something with the response
+                                                    console.log("Files: ", res);
+                                                    toast({
+                                                        variant: "success",
+                                                        title: "Front Upload Successful!",
+                                                        description: "Click on the image to check your design",
+                                                    })
+                                                } else {
+                                                    setImagesFront([])
+                                                }
+                                                // alert("Files uploaded successfully!");
                                             }}
                                             onUploadError={(error: Error) => {
                                                 // Do something with the error.
-                                                alert(`ERROR! ${error.message}`);
+                                                toast({
+                                                    variant: "destructive",
+                                                    title: "Upload was Unsuccessful!",
+                                                    description: "Please try again: " + error.message
+                                                })
                                             }}
                                         />
-
-                                    }
-                                </div>
+                                    </div>
+                                    {imageFront && imageFront.length > 0 && renderImagePreviews(imageFront, selectedSize)}
+                                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                                        <div className="flex justify-between gap-x-4">
+                                            <FormLabel htmlFor="design_back">Upload Back</FormLabel>
+                                            <Switch checked={isSwitchChecked} onCheckedChange={checked => {
+                                                setIsSwitchChecked(checked);
+                                                if (checked) setImagesBack([]);
+                                            }} />
+                                        </div>
+                                        {
+                                            isSwitchChecked ? <Input id="back" disabled placeholder='No Back' /> : <UploadButton<OurFileRouter>
+                                                appearance={{
+                                                    button:
+                                                        "ut-ready:bg-primary ut-uploading:loading ut-uploading:loading-ring ut-uploading:loading-xl ut-uploading:text-accent rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
+                                                    container: "w-max flex-row rounded-md border-cyan-300 bg-slate-800 w-full justify-between",
+                                                    allowedContent:
+                                                        "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
+                                                }}
+                                                endpoint="imageUploader"
+                                                onClientUploadComplete={(res) => {
+                                                    if (res) {
+                                                        setImagesBack(res)
+                                                        // Do something with the response
+                                                        console.log("Files: ", res);
+                                                        toast({
+                                                            variant: "success",
+                                                            title: "Back Upload Successful!",
+                                                            description: "Click on the image to check your design",
+                                                        })
+                                                    } else {
+                                                        setImagesBack([])
+                                                    }
+                                                    // alert("Files uploaded successfully!");
+                                                }}
+                                                onUploadError={(error: Error) => {
+                                                    // Do something with the error.
+                                                    toast({
+                                                        variant: "destructive",
+                                                        title: "Upload was Unsuccessful!",
+                                                        description: "Please try again: " + error.message
+                                                    })
+                                                }}
+                                            />
+                                        }
+                                    </div>
+                                    {imageBack && imageBack.length > 0 && renderImagePreviews(imageBack, selectedSize)}
+                                </>}
                             </div>
                         </div>
                         <div className="card-actions justify-end">
