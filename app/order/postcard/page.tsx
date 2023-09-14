@@ -17,6 +17,15 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 // import "@uploadthing/react/styles.css";
 import { UploadButton } from "@uploadthing/react";
 import { OurFileRouter } from '@/app/api/uploadthing/core';
@@ -24,8 +33,7 @@ import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import ProductList from "@/lib/Data/ProductList.json"
-import { productList } from "@/lib/types"
+import { postcardDetails, PostcardDetailsType } from '@/lib/Data/Postcard'
 import Image from 'next/image'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { set, useForm } from "react-hook-form"
@@ -35,42 +43,50 @@ import * as z from "zod";
 
 type OptionType = 'sizes' | 'paper' | 'orientation' | 'quantity';
 
-const typedProductList: productList[] = ProductList;
-
-const getPostcardOptions = (optionType: OptionType) => {
-    const postcardProduct = typedProductList.find(product => product.title === 'Postcard');
-    if (postcardProduct) {
-        return postcardProduct[optionType] || [];
-    }
-    return [];
-};
-
 
 
 const Postcard = () => {
 
     const [isSwitchChecked, setIsSwitchChecked] = useState<boolean>(false);
-    const [images, setImages] = useState<{
+    const [imageFront, setImagesFront] = useState<{
         name: string;
         key: string;
         url: string;
         size: number;
     }[]>([]);
+    const [selectedSize, setSelectedSize] = useState<{ width: number, height: number }>({ width: 0, height: 0 });
 
-    const imagePreview = images.map((image) => (
+    const imagePreview = imageFront.map((image) => (
         <>
             <div className="flex items-center" key={image.key}>
                 <div className="flex-shrink-0">
-                    <Image
-                        src={image.url}
-                        alt={image.name}
-                        width={50}
-                        height={50}
-                    />
+                    <Dialog>
+                        <DialogTrigger asChild className="cursor-pointer">
+                            <Image
+                                src={image.url}
+                                alt={image.name}
+                                width={50}
+                                height={50}
+                            />
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogDescription>
+                                    Please check your design
+                                </DialogDescription>
+                            </DialogHeader>
+                                <Image
+                                    src={image.url}
+                                    alt={image.name}
+                                    height={selectedSize.height}
+                                    width={selectedSize.width}
+                                />
+                        </DialogContent>
+                    </Dialog>
                 </div>
                 <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900">{image.name}</div>
-                    <div className="text-sm text-gray-500">{(image.size/1024).toPrecision(4)} KB</div>
+                    <div className="text-sm text-gray-500">{(image.size / 1024).toPrecision(4)} KB</div>
                 </div>
             </div>
         </>
@@ -83,7 +99,7 @@ const Postcard = () => {
 
 
     function onSubmit(data: z.infer<typeof PCSchema>) {
-        console.log({data, images})
+        console.log(data)
     }
 
     const optionTypes: OptionType[] = ['sizes', 'paper', 'orientation', 'quantity'];
@@ -106,7 +122,7 @@ const Postcard = () => {
                             </div>
                             <div className="flex flex-col justify-start gap-y-3">
                                 {optionTypes.map((optionType) => {
-                                    const options = getPostcardOptions(optionType);
+                                    const options = postcardDetails[optionType] || [];
                                     return (
                                         <FormField
                                             key={optionTypes.indexOf(optionType)}
@@ -114,7 +130,15 @@ const Postcard = () => {
                                             name={optionType}
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <Select onValueChange={(value) => {
+                                                        field.onChange(value); // update the form field
+                                                        if (optionType === 'sizes') {
+                                                            const sizeDetail = (postcardDetails.sizes as { [key: string]: PostcardDetailsType['sizes'][string] })[value as string];
+                                                            if (sizeDetail) {
+                                                                setSelectedSize({ width: sizeDetail.width, height: sizeDetail.height })
+                                                            }
+                                                        }
+                                                    }} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="w-[300px] md:w-[400px]">
                                                                 <SelectValue placeholder={`Select a ${optionType}`} />
@@ -122,9 +146,15 @@ const Postcard = () => {
                                                         </FormControl>
                                                         <SelectContent>
                                                             <SelectGroup>
-                                                                {options.map((option, id) => (
-                                                                    <SelectItem value={String(option)} key={id}>{String(option)}</SelectItem>
-                                                                ))}
+                                                                {Array.isArray(options) ? (
+                                                                    options.map((option, id) => (
+                                                                        <SelectItem value={String(option)} key={id}>{String(option)}</SelectItem>
+                                                                    ))
+                                                                ) : (
+                                                                    Object.keys(options).map((key, id) => (
+                                                                        <SelectItem value={key} key={id}>{key}</SelectItem>
+                                                                    ))
+                                                                )}
                                                             </SelectGroup>
                                                         </SelectContent>
                                                     </Select>
@@ -140,20 +170,20 @@ const Postcard = () => {
                                     <UploadButton<OurFileRouter>
                                         appearance={{
                                             button:
-                                                "ut-ready:bg-green-500 ut-uploading:cursor-not-allowed rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
-                                            container: "w-max flex-row justify-between rounded-md border-cyan-300 bg-slate-800 w-full",
+                                                "ut-ready:bg-primary ut-uploading:loading ut-uploading:loading-ring ut-uploading:loading-md ut-uploading:text-accent rounded-r-none bg-primary bg-none after:bg-accent p-4 text-sm",
+                                            container: "w-max flex-row rounded-md border-cyan-300 bg-slate-800 w-full justify-between",
                                             allowedContent:
                                                 "flex h-8 flex-col items-center justify-center px-2 text-white text-xs",
                                         }}
                                         endpoint="imageUploader"
                                         onClientUploadComplete={(res) => {
                                             if (res) {
-                                                setImages(res)
+                                                setImagesFront(res)
                                                 // Do something with the response
                                                 console.log("Files: ", res);
-                                               
+
                                             } else {
-                                                setImages([])
+                                                setImagesFront([])
                                             }
                                             // alert("Files uploaded successfully!");
                                         }}
@@ -163,7 +193,7 @@ const Postcard = () => {
                                         }}
                                     />
                                 </div>
-                                        {images && images.length > 0 && imagePreview}
+                                {imageFront && imageFront.length > 0 && imagePreview}
                                 <div className="grid w-full max-w-sm items-center gap-1.5">
                                     <div className="flex justify-between gap-x-4">
                                         <FormLabel htmlFor="design_back">Upload Back</FormLabel>
