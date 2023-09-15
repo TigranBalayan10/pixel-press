@@ -11,26 +11,16 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 // import "@uploadthing/react/styles.css";
 import { UploadButton } from "@uploadthing/react";
 import { OurFileRouter } from '@/app/api/uploadthing/core';
+import ImagePreviewComponent from '../../../components/OrderComponents/imagePreviewComponent'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
@@ -38,7 +28,7 @@ import { Input } from '@/components/ui/input'
 import { postcardDetails, PostcardDetailsType } from '@/lib/Data/Postcard'
 import Image from 'next/image'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { PCSchema } from '@/lib/PCSchema'
 import * as z from "zod";
 
@@ -63,44 +53,6 @@ const Postcard = () => {
     const [imageBack, setImagesBack] = useState<ImageInfo[]>([]);
     const [selectedSize, setSelectedSize] = useState<SelectedSize>({ width: 0, height: 0 });
     const { toast } = useToast();
-
-    const renderImagePreviews = (images: ImageInfo[], selectedSize: SelectedSize) => {
-        return images.map((image) => (
-            <>
-                <div className="flex items-center" key={image.key}>
-                    <div className="flex-shrink-0">
-                        <Dialog>
-                            <DialogTrigger asChild className="cursor-pointer">
-                                <Image
-                                    src={image.url}
-                                    alt={image.name}
-                                    width={50}
-                                    height={50}
-                                />
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                                <DialogHeader>
-                                    <DialogDescription>
-                                        Please check your design
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <Image
-                                    src={image.url}
-                                    alt={image.name}
-                                    height={selectedSize.height}
-                                    width={selectedSize.width}
-                                />
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                    <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{image.name}</div>
-                        <div className="text-sm text-gray-500">{(image.size / 1024).toPrecision(4)} KB</div>
-                    </div>
-                </div>
-            </>
-        ));
-    };
 
 
     const form = useForm<z.infer<typeof PCSchema>>({
@@ -212,7 +164,7 @@ const Postcard = () => {
                                             }}
                                         />
                                     </div>
-                                    {imageFront && imageFront.length > 0 && renderImagePreviews(imageFront, selectedSize)}
+                                    {imageFront && imageFront.length > 0 && <ImagePreviewComponent images={imageFront} selectedSize={selectedSize} />}
                                     <div className="grid w-full max-w-sm items-center gap-1.5">
                                         <div className="flex justify-between gap-x-4">
                                             <FormLabel htmlFor="design_back">Upload Back</FormLabel>
@@ -257,7 +209,7 @@ const Postcard = () => {
                                             />
                                         }
                                     </div>
-                                    {imageBack && imageBack.length > 0 && renderImagePreviews(imageBack, selectedSize)}
+                                    {imageBack && imageBack.length > 0 && <ImagePreviewComponent images={imageBack} selectedSize={selectedSize} />}
                                 </>}
                             </div>
                         </div>
